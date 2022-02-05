@@ -1,0 +1,44 @@
+
+services:
+  auth_redis:
+    container_name: redis
+    image: docker.io/bitnami/redis:5.0.14
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+    networks:
+      - auth_network
+
+  flask_app:
+    container_name: flask_app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    networks:
+      - auth_network
+    ports:
+      - "5000:5000"
+    depends_on:
+      - auth_redis
+    env_file:
+      - ./.env
+
+  tests:
+    container_name: tests
+    build:
+      context: ./tests
+      dockerfile: Dockerfile
+    entrypoint: >
+      sh -c "python functional/utils/wait_for_redis.py
+      && pytest . -vv"
+    networks:
+      - auth_network
+    depends_on:
+      - flask_app
+    env_file:
+      - ./.env
+
+networks:
+  auth_network:
