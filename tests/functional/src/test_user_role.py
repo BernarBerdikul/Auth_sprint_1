@@ -17,7 +17,7 @@ async def test_change_user_role(make_request, access_token, user, get_role_id):
 
 
 async def test_delete_user_role(make_request, access_token, user, get_role_id):
-    """Check role's detail & list methods"""
+    """delete user's role"""
     response = await make_request(
         endpoint="/user_role/remove",
         http_method="delete",

@@ -23,6 +23,7 @@ async def test_role_list_and_detail(make_request, access_token):
 
 
 async def test_role_create(make_request, access_token):
+    """ Check creating role """
     test_role: str = "test_role"
     response = await make_request(
         endpoint="/role/",
@@ -46,6 +47,7 @@ async def test_role_create(make_request, access_token):
 
 
 async def test_role_update(make_request, access_token, get_role_id):
+    """ Check updating role """
     updated_role: str = "updated_role"
     response = await make_request(
         endpoint=f"/role/{get_role_id}",
