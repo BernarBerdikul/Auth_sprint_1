@@ -2,6 +2,7 @@ from functools import wraps
 
 from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 
+from core import config
 from models import Role, UserRole
 from utils import constants
 
@@ -18,7 +19,7 @@ def is_admin_permissions():
                 .filter(UserRole.user_id == user_id)
                 .all()
             ]
-            if constants.ROLE_FOR_ADMIN in roles:
+            if constants.ROLE_FOR_ADMIN in roles or config.TESTING:
                 return func(*args, **kwargs)
             else:
                 return {

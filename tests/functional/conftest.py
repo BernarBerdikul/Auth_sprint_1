@@ -50,7 +50,6 @@ def make_request(session):
         data: dict = {},
         headers: str = None,
         endpoint: str = None,
-        params: dict = None,
     ) -> HTTPResponse:
         """
         :param headers: str
@@ -59,16 +58,12 @@ def make_request(session):
             HTTP метод который будет использован
         :param endpoint: str
             Путь до нашего конечного url
-        :param params: Optional[dict]
-            Параметры для запроса
         :param data: Optional[dict]
             Тело запроса
         :return: HTTPResponse
         """
-        params = params or {}
         async with dispatcher.get(http_method)(
             url=f"{Settings.SERVICE_URL}{endpoint}",
-            params=params,
             headers=headers,
             json=data,
         ) as response:
@@ -77,15 +72,14 @@ def make_request(session):
                 headers=response.headers,
                 status=response.status,
             )
-
     return inner
 
 
 @pytest.fixture(scope="function", autouse=True)
 def app():
-    test_app.config["TESTING"] = True
-    test_app.config["JWT_COOKIE_CSRF_PROTECT"] = False
-    test_app.config["JWT_TOKEN_LOCATION"] = "headers"
+    test_app.config["TESTING"]: bool = True
+    test_app.config["JWT_COOKIE_CSRF_PROTECT"]: bool = False
+    test_app.config["JWT_TOKEN_LOCATION"]: str = "headers"
     JWTManager(test_app)
     init_db(app=test_app)
 
@@ -113,12 +107,6 @@ def app():
             new_role_2.save_to_db()
             new_user_role_2 = UserRole(user_id=user.id, role_id=new_role_2.id)
             new_user_role_2.save_to_db()
-        # if not db.session.query(
-        #         User.query.filter(User.username == test_username).exists()
-        # ).scalar():
-        #     user = User(username=test_username)
-        #     user.set_password(password=test_password)
-        #     user.save_to_db()
 
 
 @pytest.fixture
@@ -126,7 +114,6 @@ async def user():
     user = User(username="Test_243f")
     user.set_password(password="Test!12345")
     user.save_to_db()
-
     yield user
 
 

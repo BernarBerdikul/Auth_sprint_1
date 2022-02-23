@@ -4,6 +4,8 @@ from flask_restful import Resource, reqparse
 from models import UserRole
 from utils.decorators import api_response_wrapper
 
+from core import config
+
 parser = reqparse.RequestParser()
 parser.add_argument(
     "role_id", trim=True, type=str, help="send correct id", required=True
@@ -17,10 +19,12 @@ class SetOwnUserRole(Resource):
     @api_response_wrapper()
     @jwt_required()
     def post(self):
-        data = parser.parse_args()
-        user_id: str = get_jwt_identity()
-        role_id: str = data.get("role_id")
-        if not UserRole.is_row_exist(user_id=user_id, role_id=role_id):
-            new_user_role = UserRole(user_id=user_id, role_id=role_id)
-            new_user_role.save_to_db()
-        return {}
+        if config.TESTING:
+            data = parser.parse_args()
+            user_id: str = get_jwt_identity()
+            role_id: str = data.get("role_id")
+            if not UserRole.is_row_exist(user_id=user_id, role_id=role_id):
+                new_user_role = UserRole(user_id=user_id, role_id=role_id)
+                new_user_role.save_to_db()
+            return {"success": True}
+        return {}, 403

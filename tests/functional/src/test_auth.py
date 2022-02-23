@@ -29,7 +29,6 @@ async def test_success_login(make_request):
         },
     )
     assert response.status == http.HTTPStatus.OK
-
     access_token = response.body.get('data')[0].get('access_token')
     response = await make_request(
         endpoint="/access_history", http_method="get",
