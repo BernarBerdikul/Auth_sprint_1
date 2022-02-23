@@ -1,10 +1,9 @@
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource, reqparse
 
+from core import config
 from models import UserRole
 from utils.decorators import api_response_wrapper
-
-from core import config
 
 parser = reqparse.RequestParser()
 parser.add_argument(

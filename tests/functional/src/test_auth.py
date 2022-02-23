@@ -29,13 +29,14 @@ async def test_success_login(make_request):
         },
     )
     assert response.status == http.HTTPStatus.OK
-    access_token = response.body.get('data')[0].get('access_token')
+    access_token = response.body.get("data")[0].get("access_token")
     response = await make_request(
-        endpoint="/access_history", http_method="get",
-        headers={"Authorization": f"Bearer {access_token}"}
+        endpoint="/access_history",
+        http_method="get",
+        headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status == http.HTTPStatus.OK
-    assert len(response.body.get('data')) == 1
+    assert len(response.body.get("data")) == 1
 
 
 async def test_logout_access_login(make_request, access_token):

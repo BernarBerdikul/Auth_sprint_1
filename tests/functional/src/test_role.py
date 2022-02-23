@@ -45,7 +45,6 @@ async def test_role_create(make_request, access_token):
     assert test_role == response_detail_name
 
 
-
 # async def test_role_create(make_request, access_token):
 #     test_role: str = "test_role"
 #     response = await make_request(

@@ -72,6 +72,7 @@ def make_request(session):
                 headers=response.headers,
                 status=response.status,
             )
+
     return inner
 
 

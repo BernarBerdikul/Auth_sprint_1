@@ -4,10 +4,10 @@ from gevent import monkey
 
 monkey.patch_all()
 
+from dotenv import load_dotenv
 from gevent.pywsgi import WSGIServer
 
 from app import app, create_app
-from dotenv import load_dotenv
 
 load_dotenv()
 
