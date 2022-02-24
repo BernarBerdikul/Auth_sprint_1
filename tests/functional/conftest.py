@@ -126,3 +126,11 @@ async def access_token(user) -> dict:
 @pytest.fixture
 async def refresh_token(user) -> dict:
     return {"Authorization": f"Bearer {create_refresh_token(identity=user.id)}"}
+
+
+@pytest.fixture
+async def get_role_id(make_request, access_token) -> str:
+    response_list = await make_request(
+        endpoint="/role/", http_method="get", headers=access_token
+    )
+    return response_list.body.get("data")[0].get("roles")[0].get("id")
