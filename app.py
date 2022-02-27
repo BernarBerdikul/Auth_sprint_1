@@ -20,8 +20,9 @@ app.config["JWT_TOKEN_LOCATION"] = ["headers"]
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = config.JWT_ACCESS_TOKEN_EXPIRES
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = config.JWT_REFRESH_TOKEN_EXPIRES
 app.config["JWT_BLACKLIST_ENABLED"] = config.JWT_BLACKLIST_ENABLED
-app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = ["access", "refresh"]
-app.config["TESTING"] = config.TESTING
+app.config["JWT_BLACKLIST_TOKEN_CHECKS"]: list = ["access", "refresh"]
+app.config["TESTING"]: bool = config.TESTING
+app.config["JWT_COOKIE_CSRF_PROTECT"]: bool = False if config.TESTING else True
 
 
 jwt = JWTManager(app)
