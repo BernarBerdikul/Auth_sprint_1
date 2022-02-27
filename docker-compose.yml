@@ -1,15 +1,15 @@
 
 services:
   auth_redis:
-    container_name: redis
+    container_name: auth_redis
     image: docker.io/bitnami/redis:5.0.14
     environment:
       # ALLOW_EMPTY_PASSWORD is recommended only for development.
       - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - '6379:6379'
     networks:
       - auth_network
+    ports:
+      - '6379:6379'
 
   flask_app:
     container_name: flask_app
@@ -19,7 +19,7 @@ services:
     networks:
       - auth_network
     ports:
-      - "5000:5000"
+      - '5000:5000'
     depends_on:
       - auth_redis
     env_file:

@@ -15,5 +15,11 @@ RUN pip install --upgrade pip && pip install -r requirements.txt --no-cache-dir
 # copy project
 COPY . .
 
-CMD ['gunicorn', "--bind 0.0.0.0:5000", "Auth_sprint_1:app"]
+# CMD ["python3", "pywsgi.py"]
 
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+
+# CMD gunicorn --worker-class gevent \
+#   --workers 1 \
+#   --bind 0.0.0.0:5000 \
+#   main:app
