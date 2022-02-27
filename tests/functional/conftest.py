@@ -78,9 +78,9 @@ def make_request(session):
 
 @pytest.fixture(scope="function", autouse=True)
 def app():
-    test_app.config["TESTING"]: bool = True
-    test_app.config["JWT_COOKIE_CSRF_PROTECT"]: bool = False
-    test_app.config["JWT_TOKEN_LOCATION"]: str = "headers"
+    # test_app.config["TESTING"]: bool = True
+    # test_app.config["JWT_COOKIE_CSRF_PROTECT"]: bool = False
+    # test_app.config["JWT_TOKEN_LOCATION"]: str = "headers"
     JWTManager(test_app)
     init_db(app=test_app)
 
@@ -112,8 +112,11 @@ def app():
 
 @pytest.fixture
 async def user():
-    user = User(username="Test_243f")
-    user.set_password(password="Test!12345")
+    test_username: str = "Test_243f"
+    test_password: str = "Test!12345"
+
+    user = User(username=test_username)
+    user.set_password(password=test_password)
     user.save_to_db()
     yield user
 
