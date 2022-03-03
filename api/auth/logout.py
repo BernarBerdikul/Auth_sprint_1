@@ -12,6 +12,50 @@ class UserLogoutAccess(Resource):
     @api_response_wrapper()
     @jwt_required()
     def post(self):
+        """
+        Logout access token method for users
+        ---
+        tags:
+          - user
+        responses:
+          200:
+            description: Success user's logout access token
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: True
+                data:
+                  type: array
+                  description: Response data
+                  items:
+                    type: object
+                message:
+                  type: string
+                  description: Response message
+          401:
+            description: Authorization error response
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: False
+                errors:
+                  type: array
+                  description: Response data
+                  items:
+                    type: object
+                    default: ...
+                  default: []
+                description:
+                  type: string
+                  description: Response description
+                message:
+                  type: string
+                  description: Response message
+        """
         jti: str = get_jwt().get("jti")
         user_id: str = get_jwt_identity()
         try:
@@ -27,6 +71,50 @@ class UserLogoutRefresh(Resource):
     @api_response_wrapper()
     @jwt_required(refresh=True)
     def post(self):
+        """
+        Logout refresh token method for users
+        ---
+        tags:
+          - user
+        responses:
+          200:
+            description: Success user's logout refresh token
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: True
+                data:
+                  type: array
+                  description: Response data
+                  items:
+                    type: object
+                message:
+                  type: string
+                  description: Response message
+          401:
+            description: Authorization error response
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: False
+                errors:
+                  type: array
+                  description: Response data
+                  items:
+                    type: object
+                    default: ...
+                  default: []
+                description:
+                  type: string
+                  description: Response description
+                message:
+                  type: string
+                  description: Response message
+        """
         jti: str = get_jwt().get("jti")
         try:
             redis_db.delete_token(key=jti)

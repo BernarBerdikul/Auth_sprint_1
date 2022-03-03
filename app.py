@@ -1,20 +1,42 @@
 import http
 
+import click
+from flasgger import Swagger
 from flask import Flask
+from flask.cli import with_appcontext
 from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow
 from flask_restful import Api
 
+import core.config
 from api import auth, role, user_role
 from core import config
 from db.postgres import db, init_db
 from db.redis import redis_db
-from models import Role
+from models import Role, User, UserRole
 from utils import constants
+from utils.decorators import requires_basic_auth
 
 app = Flask(__name__)
 api = Api(app=app)
 ma = Marshmallow(app=app)
+swagger = Swagger(
+    app,
+    decorators=[requires_basic_auth],
+    template={
+        "swagger": "2.0",
+        "info": {
+            "title": "Auth service",
+            "version": "1.0",
+        },
+        "consumes": [
+            "application/json",
+        ],
+        "produces": [
+            "application/json",
+        ],
+    },
+)
 
 app.config["JWT_SECRET_KEY"] = config.JWT_SECRET_KEY  # Change this!
 app.config["JWT_COOKIE_SECURE"] = config.JWT_COOKIE_SECURE
@@ -25,9 +47,36 @@ app.config["JWT_BLACKLIST_ENABLED"] = config.JWT_BLACKLIST_ENABLED
 app.config["JWT_BLACKLIST_TOKEN_CHECKS"]: list = ["access", "refresh"]
 app.config["TESTING"]: bool = config.TESTING
 app.config["JWT_COOKIE_CSRF_PROTECT"]: bool = False if config.TESTING else True
-
+app.config["SWAGGER"] = {
+    "title": "Swagger JWT Authentiation App",
+    "uiversion": 3,
+}
 
 jwt = JWTManager(app)
+
+
+@app.cli.command("create_admin")
+@with_appcontext
+@click.argument("username")
+@click.argument("password")
+def create_admin(username: str, password: str):
+    """ create new user with admin role """
+    if core.config.TESTING:
+        print(username)
+        print(type(username))
+        print(password)
+        print(type(password))
+        new_user = User(username=username)
+        new_user.set_password(password=password)
+        print(new_user.id)
+        # db.session.add(new_user)
+        """ find admin role """
+        # role_admin = Role.find_by_role_name(role_name=constants.ROLE_FOR_ADMIN)
+        # print(role_admin)
+        """ set admin role for user """
+        # new_user_role = UserRole(user_id=new_user.id, role_id=role_admin.id)
+        # db.session.add(new_user_role)
+        # db.session.commit()
 
 
 @jwt.token_in_blocklist_loader
@@ -45,6 +94,7 @@ def invalid_token_callback(error):
     """we have to keep the argument here, since it's passed
     in by the caller internally"""
     data: dict = {
+        "success": False,
         "message": "invalid_token",
         "description": "Signature verification failed.",
         "errors": [],
@@ -55,6 +105,7 @@ def invalid_token_callback(error):
 @jwt.unauthorized_loader
 def missing_token_callback(error):
     data: dict = {
+        "success": False,
         "message": "authorization_required",
         "description": "Request does not contain an access token.",
         "errors": [],
@@ -65,6 +116,7 @@ def missing_token_callback(error):
 @jwt.needs_fresh_token_loader
 def token_not_fresh_callback(jwt_header, jwt_payload):
     data: dict = {
+        "success": False,
         "message": "fresh_token_required",
         "description": "The token is not fresh.",
         "errors": [],
@@ -75,6 +127,7 @@ def token_not_fresh_callback(jwt_header, jwt_payload):
 @jwt.revoked_token_loader
 def revoked_token_callback(jwt_header, jwt_payload):
     data: dict = {
+        "success": False,
         "message": "token_revoked",
         "description": "The token has been revoked.",
         "errors": [],

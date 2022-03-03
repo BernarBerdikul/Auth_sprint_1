@@ -27,6 +27,7 @@ else:
 
 
 def init_db(app: Flask):
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_url
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SQLALCHEMY_DATABASE_URI"]: str = db_url
+    """ silence the deprecation warning """
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]: bool = False
     db.init_app(app=app)
