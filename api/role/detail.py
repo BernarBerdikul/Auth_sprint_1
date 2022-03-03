@@ -25,8 +25,68 @@ def return_or_abort_if_role_not_exist(role_id: str) -> Role:
 class RoleDetail(Resource):
     @api_response_wrapper()
     @jwt_required()
-    # @is_admin_permissions()
     def get(self, role_id):
+        """
+        Return detail of specific role by role_id
+        ---
+        tags:
+          - role
+        parameters:
+          - in: path
+            name: role_id
+            required: true
+            description: The ID of user's role
+            type: string
+        responses:
+          200:
+            description: The Role data
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: True
+                data:
+                  type: array
+                  description: Response data
+                  items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          default: a1c0eaa1-6255-40cc-83fc-1e33ed14f4c3
+                        name:
+                          type: string
+                          default: simple_user
+                        created_at:
+                          type: string
+                          default: 2022-02-27 14:12
+                        updated_at:
+                          type: string
+                          default: 2022-02-27 14:12
+                  default: []
+          401:
+            description: Authorization error response
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: False
+                errors:
+                  type: array
+                  description: Data with error validation messages
+                  items:
+                    type: object
+                    default: ...
+                  default: []
+                description:
+                  type: string
+                  description: Response description
+                message:
+                  type: string
+                  description: Response message
+        """
         from schemas.role import role_schema
 
         role = return_or_abort_if_role_not_exist(role_id=role_id)
@@ -36,6 +96,76 @@ class RoleDetail(Resource):
     @jwt_required()
     @is_admin_permissions()
     def patch(self, role_id):
+        """
+        Update data of specific role by role_id
+        ---
+        tags:
+          - role
+        parameters:
+          - in: path
+            name: role_id
+            required: true
+            description: The ID of user's role
+            type: string
+        parameters:
+          - in: body
+            name: body
+            schema:
+              id: Role
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: The role's name.
+                  default: "super_admin"
+        responses:
+          200:
+            description: The Role data
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: True
+                data:
+                  type: array
+                  description: Response data
+                  items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          default: a1c0eaa1-6255-40cc-83fc-1e33ed14f4c3
+                        name:
+                          type: string
+                          default: simple_user
+                        created_at:
+                          type: string
+                          default: 2022-02-27 14:12
+                        updated_at:
+                          type: string
+                          default: 2022-02-27 14:12
+                  default: []
+          400:
+            description: Bad request, already existed role name
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: False
+                data:
+                  type: array
+                  description: Response data
+                  items:
+                    type: object
+                    default: ...
+                  default: []
+                message:
+                  type: string
+                  description: Response message
+        """
         from schemas.role import role_schema
 
         new_name: str = parser.parse_args().get("name")
@@ -51,6 +181,36 @@ class RoleDetail(Resource):
     @jwt_required()
     @is_admin_permissions()
     def delete(self, role_id: str):
+        """
+        Delete specific role by role_id
+        ---
+        tags:
+          - role
+        parameters:
+          - in: path
+            name: role_id
+            required: true
+            description: The ID of user's role
+            type: string
+        responses:
+          202:
+            description: The Role deleted
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: True
+                data:
+                  type: array
+                  description: Response data
+                  items:
+                      type: object
+                  default: []
+                message:
+                  type: string
+                  description: Response message
+        """
         role = return_or_abort_if_role_not_exist(role_id=role_id)
         if role:
             db.session.delete(role)

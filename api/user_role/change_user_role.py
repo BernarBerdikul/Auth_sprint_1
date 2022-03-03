@@ -19,6 +19,44 @@ class ChangeUserRole(Resource):
     @jwt_required()
     @is_admin_permissions()
     def post(self):
+        """
+        Create user's role for specific user
+        ---
+        tags:
+          - user_role
+        parameters:
+          - in: body
+            name: body
+            schema:
+              id: UserRole
+              required:
+                - user_id
+                - role_id
+              properties:
+                user_id:
+                  type: string
+                  description: The user's id.
+                  default: 28b28c98-926b-45aa-826c-5ea495ecbfa5
+                role_id:
+                  type: string
+                  description: The role's id.
+                  default: 6e14280c-48fe-4bf9-94c0-94083e9eec55
+        responses:
+          200:
+            description: The User's role created
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: True
+                data:
+                  type: array
+                  description: Response data
+                  items:
+                      type: object
+                  default: []
+        """
         data = parser.parse_args()
         user_id: str = data.get("user_id")
         role_id: str = data.get("role_id")

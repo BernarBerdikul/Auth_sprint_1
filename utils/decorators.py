@@ -2,7 +2,38 @@ import http
 from functools import wraps
 from typing import Optional
 
+from flask import Response, request
 from flask_restful import abort
+
+
+def requires_basic_auth(f):
+    """Decorator to require HTTP Basic Auth for your endpoint."""
+
+    def check_auth(username, password):
+        return username == "guest" and password == "secret"
+
+    def authenticate():
+        return Response(
+            "Authentication required.", 401,
+            {"WWW-Authenticate": "Basic realm='Login Required'"},
+        )
+
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        # NOTE: This example will require Basic Auth only when you run the
+        # app directly. For unit tests, we can't block it from getting the
+        # Swagger specs so we just allow it to go thru without auth.
+        # The following two lines of code wouldn't be needed in a normal
+        # production environment.
+        if __name__ != "__main__":
+            return f(*args, **kwargs)
+
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+
+    return decorated
 
 
 def param_error_handler():

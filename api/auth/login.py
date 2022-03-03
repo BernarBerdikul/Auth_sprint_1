@@ -20,6 +20,69 @@ parser.add_argument("password", help="This field cannot be blank", required=True
 class UserLogin(Resource):
     @api_response_wrapper()
     def post(self):
+        """
+        Login method for users
+        ---
+        tags:
+          - user
+        parameters:
+          - in: body
+            name: body
+            schema:
+              id: UserLogin
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  description: The user's username.
+                  default: "JohnDoe"
+                password:
+                  type: string
+                  description: The user's password.
+                  default: "Qwerty123"
+        responses:
+          200:
+            description: Success user's login
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: True
+                data:
+                  type: array
+                  description: Response data
+                  items:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                      refresh_token:
+                        type: string
+                message:
+                  type: string
+                  description: Response message
+          400:
+            description: Bad request response
+            schema:
+              properties:
+                success:
+                  type: boolean
+                  description: Response status
+                  default: False
+                data:
+                  type: array
+                  description: Response data
+                  items:
+                    type: object
+                    default: ...
+                  default: []
+                message:
+                  type: string
+                  description: Response message
+        """
         data = parser.parse_args()
         username: str = data.get("username", "")
         current_user = User.find_by_username(username=username)
