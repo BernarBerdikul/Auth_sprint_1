@@ -1,3 +1,5 @@
+import http
+
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource, reqparse
 
@@ -27,7 +29,7 @@ class DeleteUserRole(Resource):
             return {
                 "message": "wrong data",
                 "description": "You can not delete own role",
-            }, 400
+            }, http.HTTPStatus.BAD_REQUEST
         """ delete user's role """
         user_role = UserRole.get_row_by_ids(user_id=user_id, role_id=role_id)
         if user_role:

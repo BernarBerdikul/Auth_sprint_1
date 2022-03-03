@@ -1,3 +1,5 @@
+import http
+
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
@@ -23,8 +25,8 @@ class RoleCreate(Resource):
         if not Role.by_name_exist(role_name=role_name):
             new_role = Role(name=role_name)
             new_role.save_to_db()
-            return role_schema.dump(new_role), 201
+            return role_schema.dump(new_role), http.HTTPStatus.CREATED
         return {
             "message": "wrong data",
             "errors": [{"name": f"Role name <{role_name}> already exist"}],
-        }, 400
+        }, http.HTTPStatus.BAD_REQUEST

@@ -1,3 +1,4 @@
+import http
 from functools import wraps
 from typing import Optional
 
@@ -16,7 +17,7 @@ def param_error_handler():
                     "description": "Check that you send correct data",
                     "errors": [],
                 }
-                abort(http_status_code=400, message=message)
+                abort(http_status_code=http.HTTPStatus.BAD_REQUEST, message=message)
 
         return inner
 

@@ -1,3 +1,5 @@
+import http
+
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from flask_restful import Resource, reqparse
 
@@ -23,8 +25,8 @@ class Profile(Resource):
         user_id: str = get_jwt_identity()
         user = User.query.filter_by(id=user_id).first()
         if user:
-            return user_schema.dump(user)
-        return {"message": codes.OBJECT_NOT_FOUND}, 404
+            return user_schema.dump(user), http.HTTPStatus.OK
+        return {"message": codes.OBJECT_NOT_FOUND}, http.HTTPStatus.NOT_FOUND
 
     @api_response_wrapper()
     @jwt_required()
@@ -38,15 +40,15 @@ class Profile(Resource):
             return {
                 "message": "Something went wrong",
                 "username": "This field cannot be blank",
-            }, 400
+            }, http.HTTPStatus.BAD_REQUEST
         try:
             profile = User.query.filter_by(id=user_id).first()
             profile.username = new_username
             profile.save_to_db()
-            return user_schema.dump(profile)
+            return user_schema.dump(profile), http.HTTPStatus.OK
         except Exception:
             db.session.rollback()
-            return {"message": "Something went wrong"}, 400
+            return {"message": "Something went wrong"}, http.HTTPStatus.BAD_REQUEST
 
     @api_response_wrapper()
     @jwt_required()
@@ -61,10 +63,10 @@ class Profile(Resource):
             redis_db.add_token(
                 key=jti, expire=config.JWT_ACCESS_TOKEN_EXPIRES, value=user_id
             )
-            return {"message": "success deleted"}
+            return {"message": "success deleted"}, http.HTTPStatus.OK
         except Exception:
             db.session.rollback()
-            return {"message": "Something went wrong"}, 400
+            return {"message": "Something went wrong"}, http.HTTPStatus.BAD_REQUEST
 
 
 class GetSuccessHistory(Resource):

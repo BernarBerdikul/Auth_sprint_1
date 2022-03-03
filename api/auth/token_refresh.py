@@ -1,3 +1,5 @@
+import http
+
 from flask_jwt_extended import (
     create_access_token,
     get_jwt,
@@ -17,8 +19,10 @@ class TokenRefresh(Resource):
         jti = get_jwt().get("jti")
         user_id: str = get_jwt_identity()
         if redis_db.is_jti_blacklisted(jti=jti):
-            return {"access_token": create_access_token(identity=user_id)}
+            return {
+                "access_token": create_access_token(identity=user_id)
+            }, http.HTTPStatus.OK
         return {
             "message": "token revoked",
             "description": "The refresh token has been revoked.",
-        }, 401
+        }, http.HTTPStatus.UNAUTHORIZED

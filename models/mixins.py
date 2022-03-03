@@ -1,3 +1,4 @@
+import http
 import uuid
 
 from flask_restful import abort
@@ -22,7 +23,7 @@ class IdMixin(db.Model):
             db.session.add(self)
             db.session.commit()
         except Exception:
-            abort(http_status_code=400, message={"message": "Something went wrong"})
+            abort(http_status_code=http.HTTPStatus.BAD_REQUEST, message={"message": "Something went wrong"})
 
 
 class CreatedUpgradeTimeMixin(IdMixin):

@@ -1,3 +1,5 @@
+import http
+
 from flask_restful import Resource, reqparse
 
 from db.postgres import db
@@ -36,7 +38,7 @@ class UserRegistration(Resource):
                 "errors": [
                     {"username": f"User {username} already exists"},
                 ],
-            }, 400
+            }, http.HTTPStatus.BAD_REQUEST
         """ check that passwords are equal """
         if password != password_confirm:
             return {
@@ -45,7 +47,7 @@ class UserRegistration(Resource):
                     {"password": "passwords are not equal"},
                     {"password_confirm": "passwords are not equal"},
                 ],
-            }, 400
+            }, http.HTTPStatus.BAD_REQUEST
         """ create new user """
         new_user = User(username=username_validation(value=username))
         new_user.set_password(password=password)
@@ -58,4 +60,4 @@ class UserRegistration(Resource):
         new_user_role = UserRole(user_id=new_user.id, role_id=default_role.id)
         db.session.add(new_user_role)
         db.session.commit()
-        return {"message": f"User {username} was created"}, 201
+        return {"message": f"User {username} was created"}, http.HTTPStatus.CREATED

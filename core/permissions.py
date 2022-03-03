@@ -1,3 +1,4 @@
+import http
 from functools import wraps
 
 from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
@@ -26,7 +27,7 @@ def is_admin_permissions():
                     "message": "permission error",
                     "description": "Only for users, who has 'admin' role!",
                     "errors": [],
-                }, 403
+                }, http.HTTPStatus.FORBIDDEN
 
         return decorator
 

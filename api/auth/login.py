@@ -1,3 +1,4 @@
+import http
 from datetime import datetime
 from typing import Any, Union
 
@@ -23,7 +24,9 @@ class UserLogin(Resource):
         username: str = data.get("username", "")
         current_user = User.find_by_username(username=username)
         if not current_user:
-            return {"message": f"User {data.get('username')} doesn't exist"}, 404
+            return {
+                "message": f"User {data.get('username')} doesn't exist"
+            }, http.HTTPStatus.NOT_FOUND
 
         if current_user.check_password(password=data.get("password")):
             acc_token: str = create_access_token(identity=current_user.id)
@@ -48,5 +51,5 @@ class UserLogin(Resource):
                 "message": f"Logged in as {current_user.username}",
                 "access_token": acc_token,
                 "refresh_token": ref_token,
-            }
-        return {"message": "Wrong credentials"}, 400
+            }, http.HTTPStatus.OK
+        return {"message": "Wrong credentials"}, http.HTTPStatus.BAD_REQUEST

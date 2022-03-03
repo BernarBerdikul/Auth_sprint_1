@@ -1,3 +1,5 @@
+import http
+
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow
@@ -47,7 +49,7 @@ def invalid_token_callback(error):
         "description": "Signature verification failed.",
         "errors": [],
     }
-    return data, 401
+    return data, http.HTTPStatus.UNAUTHORIZED
 
 
 @jwt.unauthorized_loader
@@ -57,7 +59,7 @@ def missing_token_callback(error):
         "description": "Request does not contain an access token.",
         "errors": [],
     }
-    return data, 401
+    return data, http.HTTPStatus.UNAUTHORIZED
 
 
 @jwt.needs_fresh_token_loader
@@ -67,7 +69,7 @@ def token_not_fresh_callback(jwt_header, jwt_payload):
         "description": "The token is not fresh.",
         "errors": [],
     }
-    return data, 401
+    return data, http.HTTPStatus.UNAUTHORIZED
 
 
 @jwt.revoked_token_loader
@@ -77,7 +79,7 @@ def revoked_token_callback(jwt_header, jwt_payload):
         "description": "The token has been revoked.",
         "errors": [],
     }
-    return data, 401
+    return data, http.HTTPStatus.UNAUTHORIZED
 
 
 # UserRole

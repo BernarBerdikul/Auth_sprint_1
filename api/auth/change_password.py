@@ -1,3 +1,5 @@
+import http
+
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource, reqparse
 
@@ -20,7 +22,9 @@ class ChangePassword(Resource):
             current_user = User.query.filter_by(id=user_id).first()
             current_user.set_password(password=password)
             current_user.save_to_db()
-            return {"message": "Successful password change by the user"}, 200
+            return {
+                "message": "Successful password change by the user"
+            }, http.HTTPStatus.OK
         except Exception:
             db.session.rollback()
-            return {"message": "Something went wrong"}, 400
+            return {"message": "Something went wrong"}, http.HTTPStatus.BAD_REQUEST

@@ -1,3 +1,5 @@
+import http
+
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource, reqparse
 
@@ -25,5 +27,5 @@ class SetOwnUserRole(Resource):
             if not UserRole.is_row_exist(user_id=user_id, role_id=role_id):
                 new_user_role = UserRole(user_id=user_id, role_id=role_id)
                 new_user_role.save_to_db()
-            return {"success": True}
-        return {}, 403
+            return {"success": True}, http.HTTPStatus.OK
+        return {}, http.HTTPStatus.FORBIDDEN

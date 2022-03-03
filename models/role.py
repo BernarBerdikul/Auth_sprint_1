@@ -1,3 +1,5 @@
+import http
+
 from flask_restful import abort
 
 from db.postgres import db
@@ -32,7 +34,7 @@ class Role(CreatedUpgradeTimeMixin):
             db.session.commit()
         else:
             message: dict = {"message": codes.OBJECT_NOT_FOUND, "errors": []}
-            abort(http_status_code=404, message=message)
+            abort(http_status_code=http.HTTPStatus.NOT_FOUND, message=message)
 
     @classmethod
     def by_name_exist(cls, role_name: str) -> bool:
