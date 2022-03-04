@@ -74,4 +74,5 @@ class RoleList(Resource):
                   description: Response message
         """
         from schemas.role import roles_schema
+
         return {"roles": roles_schema.dump(Role.query.all())}

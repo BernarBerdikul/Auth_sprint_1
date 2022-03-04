@@ -15,9 +15,9 @@ RUN pip install --upgrade pip && pip install -r requirements.txt --no-cache-dir
 # copy project
 COPY . .
 
-# CMD ["python3", "pywsgi.py"]
+CMD ["python3", "pywsgi.py"]
 
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+# CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
 
 # CMD gunicorn --worker-class gevent \
 #   --workers 1 \

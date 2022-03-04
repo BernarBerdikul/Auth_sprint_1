@@ -10,7 +10,7 @@ async def test_success_change_password(make_request, access_token):
         endpoint="/change_password",
         http_method="post",
         headers=access_token,
-        data={"password": "Tesla!123!"},
+        data={"password": "Tesla!123!", "password_confirm": "Tesla!123!"},
     )
     assert response.status == http.HTTPStatus.OK
 

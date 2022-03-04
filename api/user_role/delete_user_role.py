@@ -81,7 +81,9 @@ class DeleteUserRole(Resource):
         user_id: str = data.get("user_id")
         role_id: str = data.get("role_id")
         if user_id == get_jwt_identity():
-            return {"message": "You can not delete own role"}, http.HTTPStatus.BAD_REQUEST
+            return {
+                "message": "You can not delete own role"
+            }, http.HTTPStatus.BAD_REQUEST
         """ delete user's role """
         user_role = UserRole.get_row_by_ids(user_id=user_id, role_id=role_id)
         if user_role:
