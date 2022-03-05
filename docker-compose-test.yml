@@ -17,7 +17,7 @@ services:
     environment:
       - POSTGRES_USER=auth_sprint
       - POSTGRES_PASSWORD=auth_sprint
-      - POSTGRES_DB=auth_sprint
+      - POSTGRES_DB=auth_sprint_test
     volumes:
       - ../postgres_data:/var/lib/postgresql/data/
     networks:
@@ -37,6 +37,21 @@ services:
     depends_on:
       - postgres_db
       - auth_redis
+    env_file:
+      - ./.env
+
+  tests:
+    container_name: tests
+    build:
+      context: ./
+      dockerfile: DockerfileForTests
+    entrypoint: >
+      sh -c "python tests/functional/utils/wait_for_redis.py
+      && pytest . -vv"
+    networks:
+      - auth_network
+    depends_on:
+      - flask_app
     env_file:
       - ./.env
 

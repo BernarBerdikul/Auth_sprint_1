@@ -25,4 +25,4 @@ async def test_delete_user_role(make_request, access_token, user, get_role_id):
         data={"user_id": f"{user.id}", "role_id": get_role_id},
     )
     assert response.status == http.HTTPStatus.BAD_REQUEST
-    assert response.body.get("description") == "You can not delete own role"
+    assert response.body.get("message") == "You can not delete own role"

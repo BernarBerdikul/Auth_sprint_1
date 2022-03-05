@@ -9,7 +9,9 @@ from utils.decorators import api_response_wrapper
 
 parser = reqparse.RequestParser()
 parser.add_argument("password", help="This field cannot be blank", required=True)
-parser.add_argument("password_confirm", help="This field cannot be blank", required=True)
+parser.add_argument(
+    "password_confirm", help="This field cannot be blank", required=True
+)
 
 
 class ChangePassword(Resource):
@@ -91,8 +93,8 @@ class ChangePassword(Resource):
             return {
                 "message": "wrong data",
                 "errors": [
-                   {"password": "passwords are not equal"},
-                   {"password_confirm": "passwords are not equal"},
+                    {"password": "passwords are not equal"},
+                    {"password_confirm": "passwords are not equal"},
                 ],
             }, 400
         user_id: str = get_jwt_identity()

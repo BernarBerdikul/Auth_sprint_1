@@ -170,7 +170,9 @@ class RoleDetail(Resource):
 
         new_name: str = parser.parse_args().get("name")
         if Role.by_name_exist(role_name=new_name):
-            return {"message": f"Role '{role_id}' already exist"}, http.HTTPStatus.BAD_REQUEST
+            return {
+                "message": f"Role '{role_id}' already exist"
+            }, http.HTTPStatus.BAD_REQUEST
         else:
             role = return_or_abort_if_role_not_exist(role_id=role_id)
             role.name = new_name
@@ -215,4 +217,6 @@ class RoleDetail(Resource):
         if role:
             db.session.delete(role)
             db.session.commit()
-        return {"message": f"Role '{role_id}' has been deleted"}, http.HTTPStatus.ACCEPTED
+        return {
+            "message": f"Role '{role_id}' has been deleted"
+        }, http.HTTPStatus.ACCEPTED

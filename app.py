@@ -60,7 +60,7 @@ jwt = JWTManager(app)
 @click.argument("username")
 @click.argument("password")
 def create_admin(username: str, password: str):
-    """ create new user with admin role """
+    """create new user with admin role"""
     if core.config.TESTING:
         print(username)
         print(type(username))
@@ -169,7 +169,8 @@ def create_tables():
 
 def create_app(flask_app):
     init_db(app=flask_app)
-    flask_app.run(debug=True)
+    # flask_app.run(debug=True)
+    flask_app.run(debug=True, host="0.0.0.0")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,4 @@
 .pytest_cache
-/tests/
 docker-compose.yml
 README.md
 .gitignore
