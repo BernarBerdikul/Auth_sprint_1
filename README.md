@@ -1,3 +1,40 @@
+### Как запустить проект 
+
+**Склонируйте проект:**
+```commandline
+https://github.com/AndIsaev/Auth_sprint_1.git
+```
+
+**На одном уровне с папкой проекта "./Auth_sprint_1" создайте папку "./postgres_data" монтирования к образу Postgres**
+
+![result_dirs](https://github.com/AndIsaev/Auth_sprint_1/documentation/dirs.png?raw=true)
+
+**Для запуска проекта следует скопировать файл .env.example и переименовать на .env**
+```commandline
+cp .env .env.example
+```
+**Значение некоторых переменных окружения:**
+* DB_NAME - название основной БД, которая используется в проекте
+* DB_TEST_NAME - отдельная БД для запуска и прогонки тестов
+* TESTING (True | False) - значение отвечает за использование тестовой БД в проекте или нет
+
+
+
+**Запустить проект совместно с тестами и помощью Docker**
+```commandline
+docker-compose -f docker-compose-test.yml build
+docker-compose -f docker-compose-test.yml up
+```
+
+**Запустить проектв с помощью Docker**
+```commandline
+docker-compose -f docker-compose.yml build
+docker-compose -f docker-compose.yml up
+```
+
+**После запуска проекта, у вас будет доступ к документаций проекта**
+**Ссылка на [документацию проекта](http://localhost:5000/apidocs/)**
+
 # Проектная работа 6 спринта
 
 С этого модуля вы больше не будете получать чётко расписанное ТЗ, а задания для каждого спринта вы найдёте внутри уроков. Перед тем как начать программировать, вам предстоит продумать архитектуру решения, декомпозировать задачи и распределить их между командой.
