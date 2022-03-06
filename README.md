@@ -26,7 +26,7 @@ docker-compose -f docker-compose-test.yml build
 docker-compose -f docker-compose-test.yml up
 ```
 
-**Запустить проектв с помощью Docker**
+**Запустить проект с помощью Docker**
 ```commandline
 docker-compose -f docker-compose.yml build
 docker-compose -f docker-compose.yml up
