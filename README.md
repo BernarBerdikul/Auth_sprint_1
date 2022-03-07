@@ -19,6 +19,11 @@ cp .env .env.example
 * TESTING (True | False) - значение отвечает за использование тестовой БД в проекте или нет
 
 
+**Создание БД может занять много времени, выполним отдельно**
+```commandline
+docker-compose -f docker-compose.yml build postgres_db
+docker-compose -f docker-compose.yml up -d postgres_db
+```
 
 **Запустить проект совместно с тестами и помощью Docker**
 ```commandline
