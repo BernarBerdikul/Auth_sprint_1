@@ -1,6 +1,6 @@
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from db.postgres import db
+from db import db
 from models.mixins import CreatedUpgradeTimeMixin
 from utils import constants
 from utils.validators import password_validation

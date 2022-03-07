@@ -1,7 +1,7 @@
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 
-from db.postgres import db
+from db import db
 from models.mixins import CreatedUpgradeTimeMixin
 from utils.decorators import param_error_handler
 

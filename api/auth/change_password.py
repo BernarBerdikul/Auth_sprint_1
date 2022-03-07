@@ -3,7 +3,7 @@ import http
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource, reqparse
 
-from db.postgres import db
+from db import db
 from models import User
 from utils.decorators import api_response_wrapper
 

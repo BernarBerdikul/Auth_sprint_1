@@ -6,20 +6,22 @@ from flask import Flask
 from flask.cli import with_appcontext
 from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow
+from flask_migrate import Migrate
 from flask_restful import Api
 
 import core.config
 from api import auth, role, user_role
 from core import config
-from db.postgres import db, init_db
-from db.redis import redis_db
+from db import cache, db, db_url
 from models import Role, User, UserRole
 from utils import constants
 from utils.decorators import requires_basic_auth
 
 app = Flask(__name__)
 api = Api(app=app)
+migrate = Migrate(app, db)
 ma = Marshmallow(app=app)
+
 swagger = Swagger(
     app,
     decorators=[requires_basic_auth],
@@ -37,6 +39,11 @@ swagger = Swagger(
         ],
     },
 )
+
+app.config["SQLALCHEMY_DATABASE_URI"]: str = db_url
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]: bool = False
+
+db.init_app(app=app)
 
 app.config["JWT_SECRET_KEY"] = config.JWT_SECRET_KEY  # Change this!
 app.config["JWT_COOKIE_SECURE"] = config.JWT_COOKIE_SECURE
@@ -78,7 +85,7 @@ def create_admin(username: str, password: str):
 def check_if_token_in_blacklist(jwt_header, jwt_payload) -> bool:
     access = jwt_payload.get("type")
     if access == "access":
-        return redis_db.is_jti_blacklisted(jwt_payload.get("jti"))
+        return cache.is_jti_blacklisted(jwt_payload.get("jti"))
     else:
         # In blacklist there are only access tokens
         return False
@@ -153,7 +160,7 @@ api.add_resource(auth.ChangePassword, "/change_password")
 
 @app.before_first_request
 def create_tables():
-    db.create_all()
+    # db.create_all()
     if not Role.by_name_exist(role_name=constants.DEFAULT_ROLE_FOR_ALL_USERS):
         new_role = Role(name=constants.DEFAULT_ROLE_FOR_ALL_USERS)
         new_role.save_to_db()
@@ -163,8 +170,7 @@ def create_tables():
 
 
 def create_app(flask_app):
-    init_db(app=flask_app)
-    # flask_app.run(debug=True)
+    db.init_app(app=flask_app)
     flask_app.run(debug=True, host="0.0.0.0")
 
 

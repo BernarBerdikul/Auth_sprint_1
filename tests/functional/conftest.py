@@ -8,7 +8,7 @@ from flask_jwt_extended import JWTManager, create_access_token, create_refresh_t
 from multidict import CIMultiDictProxy
 
 from app import app as test_app
-from db.postgres import db, init_db
+from db import db
 from models import Role, User, UserRole
 from tests.functional.settings import Settings
 from utils import constants
@@ -82,7 +82,7 @@ def app():
     # test_app.config["JWT_COOKIE_CSRF_PROTECT"]: bool = False
     # test_app.config["JWT_TOKEN_LOCATION"]: str = "headers"
     JWTManager(test_app)
-    init_db(app=test_app)
+    db.init_app(app=test_app)
 
     test_username: str = "UserTestUser"
     test_password: str = "CoolPassword!1!"

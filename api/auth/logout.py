@@ -4,7 +4,7 @@ from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from flask_restful import Resource
 
 from core import config
-from db.redis import redis_db
+from db import cache
 from utils.decorators import api_response_wrapper
 
 
@@ -59,7 +59,7 @@ class UserLogoutAccess(Resource):
         jti: str = get_jwt().get("jti")
         user_id: str = get_jwt_identity()
         try:
-            redis_db.add_token(
+            cache.add_token(
                 key=jti, expire=config.JWT_ACCESS_TOKEN_EXPIRES, value=user_id
             )
             return {"message": "Access token has been revoked"}, http.HTTPStatus.OK
@@ -117,7 +117,7 @@ class UserLogoutRefresh(Resource):
         """
         jti: str = get_jwt().get("jti")
         try:
-            redis_db.delete_token(key=jti)
+            cache.delete_token(key=jti)
             return {"message": "Refresh token has been revoked"}, http.HTTPStatus.OK
         except Exception:
             return {"message": "Something went wrong"}, http.HTTPStatus.BAD_REQUEST

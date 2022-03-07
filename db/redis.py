@@ -32,7 +32,7 @@ class RedisCache(AbstractCache):
         self.cache.close()
 
 
-redis_db: RedisCache = RedisCache(
+redis_cache: RedisCache = RedisCache(
     cache_instance=Redis(
         host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True, charset="utf-8"
     )
