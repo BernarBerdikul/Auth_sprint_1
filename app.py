@@ -55,6 +55,7 @@ app.config["SWAGGER"] = {
 jwt = JWTManager(app)
 
 
+# TODO: Delete it
 @app.cli.command("create_admin")
 @with_appcontext
 @click.argument("username")
@@ -62,21 +63,15 @@ jwt = JWTManager(app)
 def create_admin(username: str, password: str):
     """create new user with admin role"""
     if core.config.TESTING:
-        print(username)
-        print(type(username))
-        print(password)
-        print(type(password))
         new_user = User(username=username)
         new_user.set_password(password=password)
-        print(new_user.id)
-        # db.session.add(new_user)
+        db.session.add(new_user)
         """ find admin role """
-        # role_admin = Role.find_by_role_name(role_name=constants.ROLE_FOR_ADMIN)
-        # print(role_admin)
+        role_admin = Role.find_by_role_name(role_name=constants.ROLE_FOR_ADMIN)
         """ set admin role for user """
-        # new_user_role = UserRole(user_id=new_user.id, role_id=role_admin.id)
-        # db.session.add(new_user_role)
-        # db.session.commit()
+        new_user_role = UserRole(user_id=new_user.id, role_id=role_admin.id)
+        db.session.add(new_user_role)
+        db.session.commit()
 
 
 @jwt.token_in_blocklist_loader

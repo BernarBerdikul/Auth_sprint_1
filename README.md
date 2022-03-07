@@ -7,7 +7,7 @@ https://github.com/AndIsaev/Auth_sprint_1.git
 
 **На одном уровне с папкой проекта "./Auth_sprint_1" создайте папку "./postgres_data" монтирования к образу Postgres**
 
-![result_dirs](https://github.com/AndIsaev/Auth_sprint_1/documentation/dirs.png?raw=true)
+![result_dirs](https://github.com/AndIsaev/Auth_sprint_1/blob/main/documentation/dirs.jpg?raw=true)
 
 **Для запуска проекта следует скопировать файл .env.example и переименовать на .env**
 ```commandline
@@ -26,7 +26,7 @@ docker-compose -f docker-compose-test.yml build
 docker-compose -f docker-compose-test.yml up
 ```
 
-**Запустить проектв с помощью Docker**
+**Запустить проект с помощью Docker**
 ```commandline
 docker-compose -f docker-compose.yml build
 docker-compose -f docker-compose.yml up
