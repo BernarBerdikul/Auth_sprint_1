@@ -9,7 +9,6 @@ from flask_marshmallow import Marshmallow
 from flask_restful import Api
 
 import core.config
-from api import auth, role, user_role
 from core import config
 from db.postgres import db, init_db
 from db.redis import redis_db
@@ -128,27 +127,6 @@ def revoked_token_callback(jwt_header, jwt_payload):
         "errors": [],
     }
     return data, http.HTTPStatus.UNAUTHORIZED
-
-
-# UserRole
-# api.add_resource(user_role.ChangeUserRole, "/user_role/change")
-# api.add_resource(user_role.DeleteUserRole, "/user_role/remove")
-# api.add_resource(user_role.SetOwnUserRole, "/user_role/own")
-
-# Role
-# api.add_resource(role.RoleList, "/role/")
-# api.add_resource(role.RoleCreate, "/role/")
-# api.add_resource(role.RoleDetail, "/role/<string:role_id>")
-
-# Auth
-# api.add_resource(auth.UserRegistration, "/registration")
-# api.add_resource(auth.UserLogin, "/login")
-# api.add_resource(auth.UserLogoutAccess, "/logout/access")
-# api.add_resource(auth.UserLogoutRefresh, "/logout/refresh")
-# api.add_resource(auth.TokenRefresh, "/token/refresh")
-# api.add_resource(auth.Profile, "/me/users")
-# api.add_resource(auth.GetSuccessHistory, "/access_history")
-# api.add_resource(auth.ChangePassword, "/change_password")
 
 
 @app.before_first_request
