@@ -204,7 +204,7 @@ class Profile(Resource):
 class GetSuccessHistory(Resource):
     @api_response_wrapper()
     @jwt_required()
-    def get(self) -> str:
+    def get(self) -> tuple[dict[str, str], int]:
         """
         Return list of user's login history
         ---
@@ -225,4 +225,9 @@ class GetSuccessHistory(Resource):
                   items:
                     type: string
         """
-        return cache.get_access_history(user_id=get_jwt_identity())
+        from schemas.history import history_schema
+        from models.auth_models import SuccessHistory
+        user_id: str = get_jwt_identity()
+        history = SuccessHistory.query.filter_by(user_id=user_id)
+        return {"history": history_schema.dump(history)}, http.HTTPStatus.OK
+        # return pagination.paginate(SuccessHistory, history_schema)

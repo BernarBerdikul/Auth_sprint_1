@@ -8,8 +8,9 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_restful import Resource, reqparse
 
 from core import config
-from db import cache
+from db import cache, db
 from models import User
+from models.auth_models import SuccessHistory
 from utils.decorators import api_response_wrapper
 
 parser = reqparse.RequestParser()
@@ -103,13 +104,13 @@ class UserLogin(Resource):
                 key=jti, expire=config.JWT_REFRESH_TOKEN_EXPIRES, value=current_user.id
             )
             """ save history """
-            cache.save_access_history(
+            history = SuccessHistory(
                 user_id=current_user.id,
-                access_history=(
-                    f"устройство: {request.user_agent.string} "
-                    f"дата входа: {datetime.now()}"
-                ),
+                description=f"устройство: {request.user_agent.string}\nдата входа: {datetime.now()}"
             )
+            db.session.add(history)
+            db.session.commit()
+
             return {
                 "message": f"Logged in as {current_user.username}",
                 "access_token": acc_token,

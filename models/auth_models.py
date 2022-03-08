@@ -1,3 +1,4 @@
+from sqlalchemy.dialects.postgresql import UUID
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import db
@@ -27,3 +28,10 @@ class User(CreatedUpgradeTimeMixin):
 
     def check_password(self, password):
         return check_password_hash(pwhash=self.password, password=password)
+
+
+class SuccessHistory(CreatedUpgradeTimeMixin):
+    __tablename__ = "success_history"
+
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("user.id"))
+    description = db.Column(db.String(length=500), nullable=False)

@@ -1,7 +1,8 @@
+
 """Initial migration.
 
 Revision ID: 94fe1abd9fe6
-Revises: 
+Revises:
 Create Date: 2022-03-08 03:59:07.210738
 
 """
@@ -58,6 +59,20 @@ def upgrade():
         sa.UniqueConstraint("id"),
         sa.UniqueConstraint("user_id", "role_id"),
     )
+    op.create_table(
+        "success_history",
+        sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
+        sa.Column("description", sa.String(length=500), nullable=False),
+        sa.Column("user_id", postgresql.UUID(as_uuid=True), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("id"),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["user.id"],
+        ),
+    )
     # ### end Alembic commands ###
 
 
@@ -66,4 +81,5 @@ def downgrade():
     op.drop_table("user_role")
     op.drop_table("user")
     op.drop_table("role")
+    op.drop_table("success_history")
     # ### end Alembic commands ###
