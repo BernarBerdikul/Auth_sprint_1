@@ -10,7 +10,6 @@ from flask_migrate import Migrate
 from flask_restful import Api
 
 import core.config
-from api import auth, role, user_role
 from core import config
 from db import cache, db, db_url
 from models import Role, User, UserRole
@@ -137,27 +136,6 @@ def revoked_token_callback(jwt_header, jwt_payload):
     return data, http.HTTPStatus.UNAUTHORIZED
 
 
-# UserRole
-api.add_resource(user_role.ChangeUserRole, "/user_role/change")
-api.add_resource(user_role.DeleteUserRole, "/user_role/remove")
-api.add_resource(user_role.SetOwnUserRole, "/user_role/own")
-
-# Role
-api.add_resource(role.RoleList, "/role/")
-api.add_resource(role.RoleCreate, "/role/")
-api.add_resource(role.RoleDetail, "/role/<string:role_id>")
-
-# Auth
-api.add_resource(auth.UserRegistration, "/registration")
-api.add_resource(auth.UserLogin, "/login")
-api.add_resource(auth.UserLogoutAccess, "/logout/access")
-api.add_resource(auth.UserLogoutRefresh, "/logout/refresh")
-api.add_resource(auth.TokenRefresh, "/token/refresh")
-api.add_resource(auth.Profile, "/me/users")
-api.add_resource(auth.GetSuccessHistory, "/access_history")
-api.add_resource(auth.ChangePassword, "/change_password")
-
-
 @app.before_first_request
 def create_tables():
     # db.create_all()
@@ -171,6 +149,13 @@ def create_tables():
 
 def create_app(flask_app):
     db.init_app(app=flask_app)
+    from api.auth import api_bp_auth
+    from api.role import api_bp_role
+    from api.user_role import api_bp_user_role
+    app.register_blueprint(api_bp_auth)
+    app.register_blueprint(api_bp_role)
+    app.register_blueprint(api_bp_user_role)
+    # flask_app.run(debug=True)
     flask_app.run(debug=True, host="0.0.0.0")
 
 

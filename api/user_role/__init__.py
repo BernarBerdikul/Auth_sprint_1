@@ -1,3 +1,7 @@
-from .change_user_role import ChangeUserRole
-from .delete_user_role import DeleteUserRole
-from .set_own_role import SetOwnUserRole
+from flask import Blueprint
+from flask_restful import Api
+
+api_bp_user_role = Blueprint('user_role', __name__)
+api = Api(api_bp_user_role)
+
+from . import routes
