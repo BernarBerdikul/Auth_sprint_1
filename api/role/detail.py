@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource, abort, reqparse
 
 from core.permissions import is_admin_permissions
-from db.postgres import db
+from db import db
 from models import Role
 from utils.decorators import api_response_wrapper
 

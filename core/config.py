@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 PWD_SECRET_KEY: str = "secret_key"
-# ключ для JWS токена, не использовать на проме
+# ключ для JWS токена, не использовать на проде
 JWT_SECRET_KEY: str = "super_secret"
 JWT_BLACKLIST_ENABLED: bool = True
 JWT_COOKIE_SECURE: bool = False

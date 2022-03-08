@@ -2,7 +2,7 @@ import http
 
 from flask_restful import abort
 
-from db.postgres import db
+from db import db
 from models.mixins import CreatedUpgradeTimeMixin
 from utils import codes
 from utils.decorators import param_error_handler

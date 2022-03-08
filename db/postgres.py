@@ -1,7 +1,6 @@
 import os
 
 from dotenv import load_dotenv
-from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 from core import config
@@ -17,21 +16,14 @@ DB_PORT: int = int(os.getenv("DB_PORT"))
 if config.TESTING:
     """test db"""
     DB_TEST_NAME: str = os.getenv("DB_TEST_NAME")
-    db_url: str = (
+    psql_db_url: str = (
         f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_TEST_NAME}"
     )
-    db = SQLAlchemy()
+    psql_db = SQLAlchemy()
 else:
     """prod db"""
     DB_NAME: str = os.getenv("DB_NAME")
-    db_url: str = (
+    psql_db_url: str = (
         f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )
-    db = SQLAlchemy()
-
-
-def init_db(app: Flask):
-    app.config["SQLALCHEMY_DATABASE_URI"]: str = db_url
-    """ silence the deprecation warning """
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]: bool = False
-    db.init_app(app=app)
+    psql_db = SQLAlchemy()

@@ -4,8 +4,7 @@ from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from flask_restful import Resource, reqparse
 
 from core import config
-from db.postgres import db
-from db.redis import redis_db
+from db import cache, db
 from models.auth_models import User
 from utils import codes
 from utils.decorators import api_response_wrapper
@@ -193,7 +192,7 @@ class Profile(Resource):
             db.session.delete(profile)
             db.session.commit()
             """ revoke token """
-            redis_db.add_token(
+            cache.add_token(
                 key=jti, expire=config.JWT_ACCESS_TOKEN_EXPIRES, value=user_id
             )
             return {"message": "success deleted"}, http.HTTPStatus.OK
@@ -226,4 +225,4 @@ class GetSuccessHistory(Resource):
                   items:
                     type: string
         """
-        return redis_db.get_access_history(user_id=get_jwt_identity())
+        return cache.get_access_history(user_id=get_jwt_identity())

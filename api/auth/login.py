@@ -8,7 +8,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_restful import Resource, reqparse
 
 from core import config
-from db.redis import redis_db
+from db import cache
 from models import User
 from utils.decorators import api_response_wrapper
 
@@ -99,11 +99,11 @@ class UserLogin(Resource):
                 jwt=ref_token, key=config.JWT_SECRET_KEY, algorithms="HS256"
             ).get("jti")
             """ add refresh token in black list """
-            redis_db.add_token(
+            cache.add_token(
                 key=jti, expire=config.JWT_REFRESH_TOKEN_EXPIRES, value=current_user.id
             )
             """ save history """
-            redis_db.save_access_history(
+            cache.save_access_history(
                 user_id=current_user.id,
                 access_history=(
                     f"устройство: {request.user_agent.string} "

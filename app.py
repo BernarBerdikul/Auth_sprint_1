@@ -6,19 +6,21 @@ from flask import Flask
 from flask.cli import with_appcontext
 from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow
+from flask_migrate import Migrate
 from flask_restful import Api
 
 import core.config
 from core import config
-from db.postgres import db, init_db
-from db.redis import redis_db
-from models import Role, User
+from db import cache, db, db_url
+from models import Role, User, UserRole
 from utils import constants
 from utils.decorators import requires_basic_auth
 
 app = Flask(__name__)
 api = Api(app=app)
+migrate = Migrate(app, db)
 ma = Marshmallow(app=app)
+
 swagger = Swagger(
     app,
     decorators=[requires_basic_auth],
@@ -37,6 +39,11 @@ swagger = Swagger(
     },
 )
 
+app.config["SQLALCHEMY_DATABASE_URI"]: str = db_url
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]: bool = False
+
+db.init_app(app=app)
+
 app.config["JWT_SECRET_KEY"] = config.JWT_SECRET_KEY  # Change this!
 app.config["JWT_COOKIE_SECURE"] = config.JWT_COOKIE_SECURE
 app.config["JWT_TOKEN_LOCATION"] = ["headers"]
@@ -54,6 +61,7 @@ app.config["SWAGGER"] = {
 jwt = JWTManager(app)
 
 
+# TODO: Delete it
 @app.cli.command("create_admin")
 @with_appcontext
 @click.argument("username")
@@ -63,21 +71,20 @@ def create_admin(username: str, password: str):
     if core.config.TESTING:
         new_user = User(username=username)
         new_user.set_password(password=password)
-        # db.session.add(new_user)
+        db.session.add(new_user)
         """ find admin role """
-        # role_admin = Role.find_by_role_name(role_name=constants.ROLE_FOR_ADMIN)
-        # print(role_admin)
+        role_admin = Role.find_by_role_name(role_name=constants.ROLE_FOR_ADMIN)
         """ set admin role for user """
-        # new_user_role = UserRole(user_id=new_user.id, role_id=role_admin.id)
-        # db.session.add(new_user_role)
-        # db.session.commit()
+        new_user_role = UserRole(user_id=new_user.id, role_id=role_admin.id)
+        db.session.add(new_user_role)
+        db.session.commit()
 
 
 @jwt.token_in_blocklist_loader
 def check_if_token_in_blacklist(jwt_header, jwt_payload) -> bool:
     access = jwt_payload.get("type")
     if access == "access":
-        return redis_db.is_jti_blacklisted(jwt_payload.get("jti"))
+        return cache.is_jti_blacklisted(jwt_payload.get("jti"))
     else:
         # In blacklist there are only access tokens
         return False
@@ -131,7 +138,7 @@ def revoked_token_callback(jwt_header, jwt_payload):
 
 @app.before_first_request
 def create_tables():
-    db.create_all()
+    # db.create_all()
     if not Role.by_name_exist(role_name=constants.DEFAULT_ROLE_FOR_ALL_USERS):
         new_role = Role(name=constants.DEFAULT_ROLE_FOR_ALL_USERS)
         new_role.save_to_db()
@@ -141,10 +148,10 @@ def create_tables():
 
 
 def create_app(flask_app):
+    db.init_app(app=flask_app)
     from api.auth import api_bp_auth
     from api.role import api_bp_role
     from api.user_role import api_bp_user_role
-    init_db(app=flask_app)
     app.register_blueprint(api_bp_auth)
     app.register_blueprint(api_bp_role)
     app.register_blueprint(api_bp_user_role)

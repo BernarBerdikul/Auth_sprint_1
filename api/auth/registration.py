@@ -2,7 +2,7 @@ import http
 
 from flask_restful import Resource, reqparse
 
-from db.postgres import db
+from db import db
 from models import Role, User, UserRole
 from utils import constants
 from utils.decorators import api_response_wrapper
