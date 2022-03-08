@@ -4,7 +4,7 @@ import uuid
 from flask_restful import abort
 from sqlalchemy.dialects.postgresql import UUID
 
-from db.postgres import db
+from db import db
 
 
 class IdMixin(db.Model):

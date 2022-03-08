@@ -8,7 +8,7 @@ from flask_jwt_extended import (
 )
 from flask_restful import Resource
 
-from db.redis import redis_db
+from db import cache
 from utils.decorators import api_response_wrapper
 
 
@@ -62,7 +62,7 @@ class TokenRefresh(Resource):
         """
         jti = get_jwt().get("jti")
         user_id: str = get_jwt_identity()
-        if redis_db.is_jti_blacklisted(jti=jti):
+        if cache.is_jti_blacklisted(jti=jti):
             return {
                 "access_token": create_access_token(identity=user_id)
             }, http.HTTPStatus.OK
