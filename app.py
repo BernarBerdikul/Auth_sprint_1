@@ -13,7 +13,7 @@ from api import auth, role, user_role
 from core import config
 from db.postgres import db, init_db
 from db.redis import redis_db
-from models import Role, User, UserRole
+from models import Role, User
 from utils import constants
 from utils.decorators import requires_basic_auth
 
@@ -62,13 +62,8 @@ jwt = JWTManager(app)
 def create_admin(username: str, password: str):
     """create new user with admin role"""
     if core.config.TESTING:
-        print(username)
-        print(type(username))
-        print(password)
-        print(type(password))
         new_user = User(username=username)
         new_user.set_password(password=password)
-        print(new_user.id)
         # db.session.add(new_user)
         """ find admin role """
         # role_admin = Role.find_by_role_name(role_name=constants.ROLE_FOR_ADMIN)
@@ -136,24 +131,24 @@ def revoked_token_callback(jwt_header, jwt_payload):
 
 
 # UserRole
-api.add_resource(user_role.ChangeUserRole, "/user_role/change")
-api.add_resource(user_role.DeleteUserRole, "/user_role/remove")
-api.add_resource(user_role.SetOwnUserRole, "/user_role/own")
+# api.add_resource(user_role.ChangeUserRole, "/user_role/change")
+# api.add_resource(user_role.DeleteUserRole, "/user_role/remove")
+# api.add_resource(user_role.SetOwnUserRole, "/user_role/own")
 
 # Role
-api.add_resource(role.RoleList, "/role/")
-api.add_resource(role.RoleCreate, "/role/")
-api.add_resource(role.RoleDetail, "/role/<string:role_id>")
+# api.add_resource(role.RoleList, "/role/")
+# api.add_resource(role.RoleCreate, "/role/")
+# api.add_resource(role.RoleDetail, "/role/<string:role_id>")
 
 # Auth
-api.add_resource(auth.UserRegistration, "/registration")
-api.add_resource(auth.UserLogin, "/login")
-api.add_resource(auth.UserLogoutAccess, "/logout/access")
-api.add_resource(auth.UserLogoutRefresh, "/logout/refresh")
-api.add_resource(auth.TokenRefresh, "/token/refresh")
-api.add_resource(auth.Profile, "/me/users")
-api.add_resource(auth.GetSuccessHistory, "/access_history")
-api.add_resource(auth.ChangePassword, "/change_password")
+# api.add_resource(auth.UserRegistration, "/registration")
+# api.add_resource(auth.UserLogin, "/login")
+# api.add_resource(auth.UserLogoutAccess, "/logout/access")
+# api.add_resource(auth.UserLogoutRefresh, "/logout/refresh")
+# api.add_resource(auth.TokenRefresh, "/token/refresh")
+# api.add_resource(auth.Profile, "/me/users")
+# api.add_resource(auth.GetSuccessHistory, "/access_history")
+# api.add_resource(auth.ChangePassword, "/change_password")
 
 
 @app.before_first_request
@@ -168,7 +163,13 @@ def create_tables():
 
 
 def create_app(flask_app):
+    from api.auth import api_bp_auth
+    from api.role import api_bp_role
+    from api.user_role import api_bp_user_role
     init_db(app=flask_app)
+    app.register_blueprint(api_bp_auth)
+    app.register_blueprint(api_bp_role)
+    app.register_blueprint(api_bp_user_role)
     # flask_app.run(debug=True)
     flask_app.run(debug=True, host="0.0.0.0")
 

@@ -1,6 +1,7 @@
-from .change_password import ChangePassword
-from .login import UserLogin
-from .logout import UserLogoutAccess, UserLogoutRefresh
-from .profile import GetSuccessHistory, Profile
-from .registration import UserRegistration
-from .token_refresh import TokenRefresh
+from flask import Blueprint
+from flask_restful import Api
+
+api_bp_auth = Blueprint('auth', __name__)
+api = Api(api_bp_auth)
+
+from . import routes
