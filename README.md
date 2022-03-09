@@ -2,12 +2,12 @@
 
 **Склонируйте проект:**
 ```commandline
-https://github.com/AndIsaev/Auth_sprint_1.git
+https://github.com/BernarBerdikul/Auth_sprint_1.git
 ```
 
 **На одном уровне с папкой проекта "./Auth_sprint_1" создайте папку "./postgres_data" монтирования к образу Postgres**
 
-![result_dirs](https://github.com/AndIsaev/Auth_sprint_1/blob/main/documentation/dirs.jpg?raw=true)
+![result_dirs](https://github.com/BernarBerdikul/Auth_sprint_1/blob/main/documentation/dirs.jpg?raw=true)
 
 **Для запуска проекта следует скопировать файл .env.example и переименовать на .env**
 ```commandline
